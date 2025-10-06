@@ -1,4 +1,3 @@
-// src/auth/auth.service.ts
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
@@ -6,20 +5,18 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  public users: any[] = []; // [{id, name, email, passwordHash}]
-  private refreshTokens: any[] = []; // [{ userId, token }]
+  public users: any[] = [];
+  private refreshTokens: any[] = []; 
 
   constructor(private readonly jwtService: JwtService) {}
 
   async register(user: any) {
-
     const exists = this.users.find((u) => u.email === user.email);
     if (exists) {
       return { error: 'E-mail já registrado. Use outro e-mail.' };
     }
 
     const passwordHash = await bcrypt.hash(user.password, 10);
-
     const newUser = {
       id: uuidv4(),
       name: user.name,
@@ -27,7 +24,6 @@ export class AuthService {
       passwordHash,
       createdAt: new Date().toISOString(),
     };
-
 
     this.users.push(newUser);
     return { message: 'Usuário registrado com sucesso' };
@@ -49,7 +45,8 @@ export class AuthService {
 
     const payload = { sub: found.id, name: found.name, email: found.email };
     const access_token = this.jwtService.sign(payload, { expiresIn: '15m' });
-    const refresh_token = uuidv4(); // poderia ser JWT também, mas vamos usar uuid simples
+    const refresh_token = uuidv4();
+
     this.refreshTokens.push({ userId: found.id, token: refresh_token });
 
     return {
@@ -74,6 +71,22 @@ export class AuthService {
     const access_token = this.jwtService.sign(payload, { expiresIn: '15m' });
 
     return { access_token };
+  }
+
+  async logout(refreshToken: string) {
+    const before = this.refreshTokens.length;
+    this.refreshTokens = this.refreshTokens.filter(
+      (s) => s.token !== refreshToken,
+    );
+
+    const after = this.refreshTokens.length;
+    const removed = before > after;
+
+    if (removed) {
+      return { message: 'Logout realizado com sucesso' };
+    } else {
+      return { error: 'Refresh token inválido ou já expirado' };
+    }
   }
 
   validateToken(token: string) {
