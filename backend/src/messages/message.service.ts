@@ -29,8 +29,6 @@ export class MessagesService {
 
       const metadata = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
 
-
-      console.log('User Payload:', userPayload);
     
       if (metadata.userId !== userPayload.sub) {
         throw new ForbiddenException('Você não tem permissão para usar este arquivo');
