@@ -7,8 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     JwtModule.register({
-      secret: 'supersecretkey', // 🔑 troque depois para process.env.JWT_SECRET
-      signOptions: { expiresIn: '15m' }, // access token expira rápido
+      secret: 'supersecretkey', 
+      signOptions: { expiresIn: '2h' }, 
     }),
   ],
   controllers: [AuthController],
