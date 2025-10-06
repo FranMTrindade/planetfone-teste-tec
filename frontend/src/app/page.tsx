@@ -2,7 +2,11 @@
 
 import { useState } from 'react';
 import { Card, Input, Button, Tabs, message } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import {
+  UserOutlined,
+  LockOutlined,
+  MailOutlined,
+} from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { AuthService } from '@/services/auth';
 import { useAuth } from '@/context/authContext';
@@ -21,7 +25,7 @@ export default function AuthPage() {
         const { data } = await AuthService.register(
           form.name,
           form.email,
-          form.password
+          form.password,
         );
         return data;
       }
@@ -80,7 +84,9 @@ export default function AuthPage() {
             prefix={<LockOutlined />}
             placeholder="Senha"
             value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, password: e.target.value })
+            }
             size="large"
           />
 

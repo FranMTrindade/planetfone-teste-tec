@@ -12,12 +12,12 @@ export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<any | null>(null);
   const [api, contextHolder] = notification.useNotification();
 
-  // 🔹 Hooks React Query
+
   const { data: files, isLoading, isError } = useFiles();
   const uploadMutation = useUploadFile();
   const deleteMutation = useDeleteFile();
 
-  // ✅ Upload via API
+
   const handleUpload = async (file: File) => {
     try {
       await uploadMutation.mutateAsync(file);
@@ -36,7 +36,7 @@ export default function UploadPage() {
     }
   };
 
-  // ✅ Delete via API
+
   const handleDelete = async (id: string) => {
     try {
       await deleteMutation.mutateAsync(id);
@@ -52,11 +52,11 @@ export default function UploadPage() {
         description: err?.response?.data?.message || 'Não foi possível excluir o arquivo.',
         placement: 'topRight',
       });
-      throw err; // importante para o Popconfirm lidar com o erro
+      throw err; 
     }
   };
 
-  // ✅ Estados de carregamento / erro
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
