@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { Row, Col, Spin, notification } from 'antd';
 import { useDeleteFile, useFiles, useUploadFile } from '@/services/uploads';
 import FilePreviewCard from '@/components/filePreviewCard';
 import FilePreviewModal from '@/components/filePreviewModal';
 import UploadButton from '@/components/uploadButton';
+import { useProtectedRoute } from '@/hooks/useAuth';
 
 
 export default function UploadPage() {
+  useProtectedRoute();
   const [selectedFile, setSelectedFile] = useState<any | null>(null);
   const [api, contextHolder] = notification.useNotification();
-
-
   const { data: files, isLoading, isError } = useFiles();
   const uploadMutation = useUploadFile();
   const deleteMutation = useDeleteFile();

@@ -6,8 +6,10 @@ import { useChat } from '@/context/chatContext';
 import { ChatList } from '@/components/chatList';
 import { ChatInput } from '@/components/chatInput';
 import { useFiles } from '@/services/uploads';
+import { useProtectedRoute } from '@/hooks/useAuth';
 
 export default function ChatPage() {
+useProtectedRoute();
   const { messages, isLoading } = useChat();
   const { data: files, isLoading: isLoadingFiles } = useFiles();
     const [prevCount, setPrevCount] = useState(0);
