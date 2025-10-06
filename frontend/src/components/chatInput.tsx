@@ -14,7 +14,6 @@ import {
   SendOutlined,
   PlusOutlined,
   FileOutlined,
-  AudioOutlined,
 } from '@ant-design/icons';
 import { useState } from 'react';
 import { useChat } from '@/context/chatContext';

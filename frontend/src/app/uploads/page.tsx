@@ -1,6 +1,6 @@
 'use client';
 
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import { Row, Col, Spin, notification } from 'antd';
 import { useDeleteFile, useFiles, useUploadFile } from '@/services/uploads';
 import FilePreviewCard from '@/components/filePreviewCard';

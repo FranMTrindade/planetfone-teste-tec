@@ -13,7 +13,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Buscar mensagens a cada 5 segundos (polling automático)
+
   const {
     data: messages = [],
     isLoading,
@@ -21,17 +21,16 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   } = useQuery({
     queryKey: ['messages'],
     queryFn: chatService.getMessages,
-    refetchInterval: 5000, // ← faz o GET a cada 5s
+    refetchInterval: 5000, 
     refetchIntervalInBackground: true,
     refetchOnWindowFocus: true,
   });
 
-  // 🔹 Enviar mensagem
   const sendMessage = useMutation({
     mutationFn: chatService.sendMessage,
     onMutate: () => setLoading(true),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages'] }); // força atualização após envio
+      queryClient.invalidateQueries({ queryKey: ['messages'] }); 
       setInputValue('');
       setSelectedFile(null);
       setLoading(false);

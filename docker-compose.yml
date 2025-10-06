@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/uploads:/app/uploads
+    environment:
+      - APP_URL=http://localhost:3001
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+    depends_on:
+      - backend

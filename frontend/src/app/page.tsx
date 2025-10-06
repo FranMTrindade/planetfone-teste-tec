@@ -39,8 +39,8 @@ export default function AuthPage() {
         setMode('login');
       }
     },
-    onError: (error: any) => {
-      message.error(error.response?.data?.message || 'Erro ao autenticar');
+    onError: (error) => {
+      message.error('Erro ao autenticar');
     },
   });
 
