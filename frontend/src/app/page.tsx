@@ -1,103 +1,100 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import { Card, Input, Button, Tabs, message } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { useMutation } from '@tanstack/react-query';
+import { AuthService } from '@/services/auth';
+import { useAuth } from '@/context/authContext';
+
+export default function AuthPage() {
+  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const { login } = useAuth();
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (mode === 'login') {
+        const { data } = await AuthService.login(form.email, form.password);
+        return data;
+      } else {
+        const { data } = await AuthService.register(
+          form.name,
+          form.email,
+          form.password
+        );
+        return data;
+      }
+    },
+    onSuccess: (data) => {
+      if (mode === 'login') {
+        login(data.access_token);
+        message.success('Login realizado com sucesso!');
+      } else {
+        message.success('Usuário registrado com sucesso!');
+        setMode('login');
+      }
+    },
+    onError: (error: any) => {
+      message.error(error.response?.data?.message || 'Erro ao autenticar');
+    },
+  });
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+      <Card
+        className="w-full max-w-md shadow-lg rounded-lg"
+        title={<h2 className="text-center text-xl font-semibold">Bem-vindo</h2>}
+      >
+        <Tabs
+          activeKey={mode}
+          centered
+          onChange={(key) => setMode(key as 'login' | 'register')}
+          items={[
+            { key: 'login', label: 'Login' },
+            { key: 'register', label: 'Registrar' },
+          ]}
         />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+        <div className="flex flex-col gap-3 mt-4">
+          {mode === 'register' && (
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Nome"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              size="large"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          )}
+
+          <Input
+            prefix={<MailOutlined />}
+            placeholder="E-mail"
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            size="large"
+          />
+
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder="Senha"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            size="large"
+          />
+
+          <Button
+            type="primary"
+            loading={mutation.isPending}
+            size="large"
+            onClick={() => mutation.mutate()}
+            className="w-full mt-2"
           >
-            Read our docs
-          </a>
+            {mode === 'login' ? 'Entrar' : 'Registrar'}
+          </Button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </Card>
     </div>
   );
 }
